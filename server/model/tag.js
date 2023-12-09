@@ -7,11 +7,6 @@ var TagSchema = new Schema({
         type:String,
         required:true,
     },
-    questions:[{
-        type: Schema.Types.ObjectID,
-        ref: 'Question',
-        default: [],
-    }],
 });
 
 module.exports = mongoose.model('Tag', TagSchema);
