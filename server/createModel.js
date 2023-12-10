@@ -77,5 +77,5 @@ module.exports = {
     createComment,
     createQuestion,
     createTag,
-    createUser
+    createUser,
 }
