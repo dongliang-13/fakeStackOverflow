@@ -1,3 +1,8 @@
-export default function Home(){
-    return <div>home</div>
+import AllQuestion from './allQuestion';
+
+export default function Home(props){
+    return (
+        <AllQuestion 
+            {...props}/>
+    )
 }

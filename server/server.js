@@ -62,12 +62,12 @@ app.use(session({
 app.get('/', (req, res) => {
     if(req.session.user){
         let name = req.session.user;
-        res.send({userType:'registered', username: name})
+        res.send({userType:'registered', username: name, id: req.sessionID})
     }
     else{
         res.send({userType:'guest', username: null});
     }
-})
+});
 
 app.post('/register', async (req,res) => {
     const {username, email, password} = req.body;
@@ -139,4 +139,77 @@ app.get("/getData", async (req, res)=>{
         answer: allA,
         user: allU,
     });
+})
+
+app.get("/getTag/:tag", async (req,res)=>{
+    const id = req.params.tag;
+    const objectId = new mongoose.Types.ObjectId(id);
+    let result = await Tag.findOne({_id: objectId}).exec();
+    res.send(result);
+})
+
+app.post("/newQuestion", async (req,res)=>{
+    let { title, summary, text, tags } = req.body;
+    let newTags = [];
+    const user = await User.findOne({username:req.session.user}).exec();
+    
+    await Promise.all(tags.map(async (tag) => {
+        const isNewTag = await Tag.findOne({name: tag}).exec();
+        if(!isNewTag){
+            newTags.push(tag);
+        }
+    }));
+
+    if(newTags.length > 0 && user.reputation < 50 && user.userType !== 'admin'){
+        return res.send({
+            success: false,
+            errorMsg: "You don't have enough reputation to create a new tag"
+        });
+    }
+    else{
+        if(newTags.length > 0){
+            await Promise.all(newTags.map(async(tag) => {
+                let newTag = new Tag({
+                    name: tag
+                });
+
+                let tid = await newTag.save();
+                await User.updateOne({username: user.username}, {$push:{tags:tid}});
+            }));
+        }
+        tags = await Promise.all(tags.map(async(tag) => {
+            let tid = await Tag.findOne({name: tag}).exec();
+            if (tid) {
+                return tid._id; // return the ObjectId, not the whole document
+            } else {
+                // handle the case where the tag is not found in the database
+                throw new Error(`Tag not found: ${tag}`);
+            }
+        }));
+
+        let newQuestion = new Question({
+            title: title,
+            summary: summary,
+            text: text,
+            tags: tags,
+            askedBy: user.username,
+            askedDateTime: new Date(),
+            views: 0,
+            answers: [],
+            comments: [],
+            upvotes: [],
+            downvotes: [],
+        });
+        await newQuestion.save();
+        return res.send({
+            success: true
+        })
+    }
+});
+
+app.get("/getAnswer/:id", async (req,res)=>{
+    const id = req.params.id;
+    const objectId = new mongoose.Types.ObjectId(id);
+    let result = await Answer.findOne({_id: objectId}).exec();
+    res.send(result);
 })

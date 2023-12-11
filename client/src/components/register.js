@@ -92,7 +92,7 @@ export default class Register extends React.Component{
 
     render(){
         return (
-            <div>
+            <div id = "register">
                 <h1>Register Form</h1>
                 <form onSubmit = {this.register} style={{border:'1px solid black', padding:'10px'}}>
                     <label htmlFor="username">Username:</label><br />
@@ -104,7 +104,7 @@ export default class Register extends React.Component{
                     <label htmlFor="confirmPw">Confirm Password:</label><br />
                     <input type="password" id="confirmPw" name="confirmPw" value = {this.state.confirmPw} onChange = {this.handleConfirmPwChange} required/><br /><br />
                     <input type="submit" value="Register" /><br />
-                    <div id = 'errorMessage'>{this.state.errorMsg}</div>
+                    <div id = "errorMessage">{this.state.errorMsg}</div>
                 </form> <br />
                 <button onClick = {()=>this.changePage('welcome')}>Back</button>
             </div>
