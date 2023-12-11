@@ -47,22 +47,18 @@ var createModel = require("./createModel");
 
 //middleware
 var cors = require('cors');
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: ['http://127.0.0.1:3000','http://localhost:3000'] }));
 app.use(express.json())
 app.use(express.urlencoded({extend:true}));
 
 app.use(session({
     secret: "superSecretKey",
-    cookie: {
-      maxAge: 30000,
-    },
+    cookie: {},
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/fake_so'})
 }));
   
-  
-
 app.get('/', (req, res) => {
     if(req.session.user){
         let name = req.session.user;
@@ -98,19 +94,49 @@ app.post('/register', async (req,res) => {
 });
 
 app.post('/login', async (req,res)=>{
-    console.log(req.sessionID);
     const {email, password} = req.body;
     const user = (await User.find({email: email}).exec())[0];
     if(user){
         const verdict = await bcrypt.compare(password, user.password);
         if(verdict){
             req.session.user = user.username;
-            res.send(req.session.user);
+            res.send({
+                success : true,
+                username : user.username,
+            });
         }
         else {
-            return res
-              .status(401)
-              .json({errorMessage: "Wrong email address or password"})    
+            return res.send({
+                success : false,
+                message : "Incorrect email or password"
+            });
         }
     }
 });
+
+app.post("/logout", (req, res) => {
+    req.session.destroy(err => {
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.clearCookie('connect.sid')
+            res.send();
+        }
+    });
+  });
+
+app.get("/getData", async (req, res)=>{
+    const allQ = await Question.find({}).exec();
+    const allT = await Tag.find({}).exec();
+    const allC = await Comment.find({}).exec();
+    const allA = await Answer.find({}).exec();
+    const allU = await User.find({}).exec();
+    res.send({
+        question: allQ,
+        tag: allT,
+        comment: allC,
+        answer: allA,
+        user: allU,
+    });
+})
