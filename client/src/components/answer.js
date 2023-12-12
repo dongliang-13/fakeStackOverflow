@@ -24,19 +24,17 @@ export default class Answer extends Component{
         );
     }
 
-    componentDidMount(){
-        document.getElementsByClassName("answer-text")[this.props.index].innerHTML = this.textConvert(this.props.answer.text);
-        
-    }
-
     render(){
+        const currentAnswer = this.props.answer.find( (val) => {
+            return val._id === this.props.answerId;
+        });
         return (
             <div className = "answer bottomBorder">
                 <div className ="answer-text">
-                    
+                    {currentAnswer.text}
                 </div>
                 <div className ="answer-answerer">
-                    <Asker color = "green" name = {this.props.answer.answerBy} date = {this.props.answer.answerDate} action = "answered"/>
+                    <Asker color = "green" name = {currentAnswer.answerBy} date = {currentAnswer.answerDate} action = "answered"/>
                 </div>
             </div>
         );

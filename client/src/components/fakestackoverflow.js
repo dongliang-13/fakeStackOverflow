@@ -62,10 +62,12 @@ export default class FakeStackoverflow extends React.Component{
     return answers || [];
 }
 
-  setPage(page, question = null, editQuestion = null){
+  async setPage(page, question = null, editQuestion = null){
+    await this.updateData();
     this.setState({
       page: page,
       searchResultText : '',
+      filterMode: "newest",
     });
     if(question!==null){
       this.setState({
@@ -77,7 +79,6 @@ export default class FakeStackoverflow extends React.Component{
         editQuestion : editQuestion
       });
     }
-    this.updateData();
   }
 
   setUser(user){
@@ -131,7 +132,7 @@ export default class FakeStackoverflow extends React.Component{
     const searchFilterText = this.state.searchResultText;
     const filterMode = this.state.filterMode;
 
-    let copyData = this.state.data;
+    let copyData = {...this.state.data};
     if(searchFilterText!==""){
       if(searchFilterText.includes("[") && searchFilterText.includes("]")){
       }
@@ -212,7 +213,7 @@ export default class FakeStackoverflow extends React.Component{
         question = {this.state.currentQuestion}
         updateModel = {this.updateData}
         changePage = {this.setPage}
-        getAnswers = {this.getAnswers}/>
+        answer = {this.state.data.answer}/>
     }
     else if (this.state.page === "newAnswerPage"){
       html = <NewAnswerPage 

@@ -7,11 +7,10 @@ export default class AnswerPage extends Component{
         this.props.updateModel();
     }
     render(){
-        //should execute after axios.post
         return(
             <div id = "answerPage">
                 <QuestionInfo question = {this.props.question} changePage = {this.props.changePage} user = {this.props.user}/>
-                <Answers question = {this.props.question} changePage = {this.props.changePage} getAnswers = {this.props.getAnswers} user = {this.props.user}/>
+                <Answers question = {this.props.question} changePage = {this.props.changePage} answer = {this.props.answer} user = {this.props.user}/>
             </div>
         )
     }
