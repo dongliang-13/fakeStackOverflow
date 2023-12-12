@@ -6,6 +6,11 @@ import Register from './register';
 import NewQuestionPage from './newQuestionPage';
 import AnswerPage from './answerPage'
 import Navigate from './navigate';
+import NewAnswerPage from './newAnswerPage';
+import SearchResultPage from './searchResultPage';
+import TagsPage from './tagsPage';
+import Profile from "./profile";
+import EditQuestion from "./editQuestion";
 
 export default class FakeStackoverflow extends React.Component{
   constructor(props){
@@ -27,6 +32,7 @@ export default class FakeStackoverflow extends React.Component{
       searchResultText : '',
       filterMode : "newest",
       currentQuestion : null,
+      editQuestion : null,
     });
 
     this.setPage = this.setPage.bind(this);
@@ -35,17 +41,43 @@ export default class FakeStackoverflow extends React.Component{
     this.updateData = this.updateData.bind(this); 
     this.getDisplayQuestions = this.getDisplayQuestions.bind(this);
     this.changefilterMode = this.changefilterMode.bind(this);
+    this.getAnswers = this.getAnswers.bind(this);
+    this.changeSearchResult = this.changeSearchResult.bind(this);
+    this.updateDataView = this.updateDataView.bind(this);
   }
 
-  setPage(page, question = null){
+  changeSearchResult(text){
+    this.setState( {
+      page : "searchResultPage", 
+      searchResultText : text,
+    });
+  }
+
+  async getAnswers() {
+    const answerPromises = this.state.currentQuestion.answers.map(async (ans, index) => {
+        const result = await axios.get(`http://127.0.0.1:8000/getAnswer/${ans}`, {withCredentials:true});
+        return result.data;
+    });
+    const answers = await Promise.all(answerPromises);
+    return answers || [];
+}
+
+  setPage(page, question = null, editQuestion = null){
     this.setState({
-      page: page
+      page: page,
+      searchResultText : '',
     });
     if(question!==null){
       this.setState({
         currentQuestion: question
       })
     }
+    if(editQuestion!==null){
+      this.setState({
+        editQuestion : editQuestion
+      });
+    }
+    this.updateData();
   }
 
   setUser(user){
@@ -84,7 +116,7 @@ export default class FakeStackoverflow extends React.Component{
       };
       let newCurrentQ = null;
       if(this.state.currentQuestion!==null){
-        newCurrentQ = this.state.data.question.find(q=>{
+        newCurrentQ = updatedData.question.find(q=>{
           return q._id === this.state.currentQuestion._id;
         });
       }
@@ -99,26 +131,16 @@ export default class FakeStackoverflow extends React.Component{
     const searchFilterText = this.state.searchResultText;
     const filterMode = this.state.filterMode;
 
-    let copyData = {...this.state.data};
+    let copyData = this.state.data;
     if(searchFilterText!==""){
       if(searchFilterText.includes("[") && searchFilterText.includes("]")){
-          const regex = /\[(.*?)\]/g;
-          const matches = searchFilterText.match(regex);
-          const textArray = matches.map(match => match.slice(1, -1));
-
-          const q = copyData.question.filter((question) => 
-              question.tags.some((tag) => {
-                return textArray.includes(tag.name);
-              })
-          );
-          copyData.question = q;
       }
       else{
           const q = copyData.question.filter((question) => question.title.toLowerCase().includes(searchFilterText.toLowerCase()));
           copyData.question = q;
       }
     }else{
-      if(this.state.currentPage === 'searchResultPage'){
+      if(this.state.page === 'searchResultPage'){
         copyData.question = [];
       }
     }
@@ -147,14 +169,23 @@ export default class FakeStackoverflow extends React.Component{
     })
   }
 
+  updateDataView(question) {
+    axios.post('http://127.0.0.1:8000/updateQuestionViewCount', question, {withCredentials:true})
+      .catch(err=>{
+        console.error(err);
+      });
+    this.updateData();
+  }
+
   render(){
     let html = "";
     if((this.state.user.userType === 'registered' && this.state.page === 'welcome') || this.state.page === 'home'){
       html = <Home
+        user = {this.state.user}
         setPage = {this.setPage}
         getDisplayQuestions = {this.getDisplayQuestions}
         changefilterMode = {this.changefilterMode}
-        updateDataView = {this.updateData}/>
+        updateDataView = {this.updateDataView}/>
     }
     else if(this.state.page === 'welcome'){
       return <Welcome 
@@ -177,8 +208,47 @@ export default class FakeStackoverflow extends React.Component{
     }
     else if(this.state.page === 'answerPage'){
       html = <AnswerPage 
+        user = {this.state.user}
         question = {this.state.currentQuestion}
         updateModel = {this.updateData}
+        changePage = {this.setPage}
+        getAnswers = {this.getAnswers}/>
+    }
+    else if (this.state.page === "newAnswerPage"){
+      html = <NewAnswerPage 
+         question={this.state.currentQuestion} 
+         data = {this.state.data}
+         changePage = {this.setPage}
+         updateModel = {this.updateData}
+       />;
+     }
+    else if (this.state.page === "searchResultPage"){
+      html = <SearchResultPage 
+        user = {this.state.user}
+        data = {this.state.data}
+        filterText = {this.state.searchResultText}
+        changefilterMode = {this.changefilterMode}
+        getDisplayQuestions = {this.getDisplayQuestions}
+        updateDataView = {this.updateDataView}
+        changePage = {this.setPage}
+      />;
+    }
+    else if (this.state.page === "tagsPage"){
+      html = <TagsPage 
+        user = {this.state.user}
+        data = {this.state.data}
+        changePage = {this.setPage}
+        changeSearchResult = {this.changeSearchResult}
+      />;
+    }
+    else if (this.state.page === "profile"){
+      html = <Profile 
+        user = {this.state.user}
+        changePage = {this.setPage}/>;
+    }
+    else if (this.state.page === "editQuestion"){
+      return <EditQuestion 
+        editQuestion = {this.state.editQuestion}
         changePage = {this.setPage}/>
     }
     else{
@@ -187,6 +257,7 @@ export default class FakeStackoverflow extends React.Component{
     return (
       <>
         <Navigate 
+          changeSearchResult = {this.changeSearchResult}
           user = {this.state.user}
           setPage = {this.setPage}
           setUser = {this.setUser}/>

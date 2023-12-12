@@ -30,6 +30,7 @@ export default class QuestionInfo extends Component{
     }
 
     render(){
+        const isLoggedIn = (this.props.user.userType === 'registered' || this.props.user.userType === 'admin');
         return(
             <div id="questionInfo" className = "bottomBorder">
                 <div id = "questionInfo-numAnswer">
@@ -39,7 +40,7 @@ export default class QuestionInfo extends Component{
                     {this.props.question.title}
                 </div>
                 <div id="questionInfo-askQuestion">
-                    <AskQuestionButton changePage = {this.props.changePage}/>
+                    {isLoggedIn ? <AskQuestionButton changePage = {this.props.changePage}/> : null }
                 </div>
                 <div id="questionInfo-numView">
                     {this.props.question.views} views

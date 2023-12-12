@@ -1,7 +1,6 @@
 import { Component } from "react";
 import Answer from "./answer";
 import NewAnswerButton from "./newAnswerButton";
-import axios from "axios";
 
 export default class Answers extends Component{
     constructor(props){
@@ -11,31 +10,27 @@ export default class Answers extends Component{
         };
     }
 
-    componentDidMount() {
-        this.getAnswers(this.props.question.answers);
-    }
-
-    async getAnswers(answersArr) {
-        const answerPromises = answersArr.map(async (ans, index) => {
-            const result = await axios.get(`http://127.0.0.1:8000/getAnswer/${ans}`, {withCredentials:true});
-            ans = result.data;
-            return <Answer
-                question={this.props.question}
-                answer={ans}
-                key={index}
-                index={index}
-            />;
-        });
-        const answers = await Promise.all(answerPromises);
+    async componentDidMount() {
+        const answers = await this.props.getAnswers();
         this.setState({ answers });
     }
 
     render(){
+        const isLoggedIn = (this.props.user.userType === 'registered' || this.props.user.userType === 'admin');
+        const arr = this.state.answers.map( (ans,index) => 
+            <Answer 
+                question = {this.props.question}
+                answer = {ans}
+                key = {index}
+                index = {index}
+            /> 
+        );
         return (
             <div id = "answers">
-                {this.state.answers}
-                <NewAnswerButton key = {"newAnswerButton"} changePage = {this.props.changePage} question = {this.props.question}/>
+                {arr}
+                {isLoggedIn ? <NewAnswerButton key = {"newAnswerButton"} changePage = {this.props.changePage} question = {this.props.question}/> : null}
             </div>
         );
     }
 }
+

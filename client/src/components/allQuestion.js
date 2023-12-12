@@ -11,7 +11,8 @@ export default class AllQuestion extends Component {
                     headerText = "All Questions"
                     numQuestions = {this.copyData.question.length}
                     changefilterMode = {this.props.changefilterMode}
-                    changePage = {this.props.setPage}/>
+                    changePage = {this.props.setPage}
+                    user = {this.props.user}/>
                 <Questions data = {this.copyData} changePage = {this.props.setPage} updateDataView = {this.props.updateDataView}/>
             </div>
         );

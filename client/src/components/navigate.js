@@ -1,4 +1,5 @@
 import React from 'react';
+import SearchParam from './searchParam';
 import axios from 'axios';
 
 export default class Navigate extends React.Component{
@@ -14,12 +15,15 @@ export default class Navigate extends React.Component{
     }
 
     render(){
-        const isLoggedIn = this.props.user.userType === 'registered';
+        const isLoggedIn = (this.props.user.userType === 'registered' || this.props.user.userType === 'admin');
         return <div id = "navigate" className = "bottomBorder">
             {isLoggedIn ? <span id = "navigate-hi">Hi, {this.props.user.username}</span> : null}
             <button onClick = {()=>{this.props.setPage("home")}}>All Questions</button>
-            <button onClick = {()=>{this.props.setPage("tag")}}>All Tags</button>
-            <input type = "text" placeholder='search'></input>
+            <button onClick = {()=>{this.props.setPage("tagsPage")}}>All Tags</button>
+            {isLoggedIn ? <button onClick = {()=>{this.props.setPage("profile")}}>Profile</button> : null}
+            <SearchParam 
+                changeSearchResult = {this.props.changeSearchResult}
+            />
             {isLoggedIn ? <button onClick = {()=>this.logout()}>Logout</button> : null}
         </div>
     }

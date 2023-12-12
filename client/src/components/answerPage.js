@@ -10,8 +10,8 @@ export default class AnswerPage extends Component{
         //should execute after axios.post
         return(
             <div id = "answerPage">
-                <QuestionInfo question = {this.props.question} changePage = {this.props.changePage}/>
-                <Answers question = {this.props.question} changePage = {this.props.changePage}/>
+                <QuestionInfo question = {this.props.question} changePage = {this.props.changePage} user = {this.props.user}/>
+                <Answers question = {this.props.question} changePage = {this.props.changePage} getAnswers = {this.props.getAnswers} user = {this.props.user}/>
             </div>
         )
     }

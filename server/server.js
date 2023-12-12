@@ -148,6 +148,18 @@ app.get("/getTag/:tag", async (req,res)=>{
     res.send(result);
 })
 
+app.get("/getUser/:username", async (req,res) => {
+    let result = await User.findOne({username:req.params.username}).exec();
+    res.send(result);
+})
+
+app.get("/getQuestion/:id", async (req,res)=>{
+    const id = req.params.id;
+    const objectId = new mongoose.Types.ObjectId(id);
+    let result = await Question.findOne({_id: objectId}).exec();
+    res.send(result);
+})
+
 app.post("/newQuestion", async (req,res)=>{
     let { title, summary, text, tags } = req.body;
     let newTags = [];
@@ -200,7 +212,8 @@ app.post("/newQuestion", async (req,res)=>{
             upvotes: [],
             downvotes: [],
         });
-        await newQuestion.save();
+        let qid = await newQuestion.save();
+        await User.updateOne({username:req.session.user}, {$push:{questions:qid}});
         return res.send({
             success: true
         })
@@ -212,4 +225,69 @@ app.get("/getAnswer/:id", async (req,res)=>{
     const objectId = new mongoose.Types.ObjectId(id);
     let result = await Answer.findOne({_id: objectId}).exec();
     res.send(result);
+})
+
+app.post("/newAnswer", async (req,res)=>{
+    const objectId = new mongoose.Types.ObjectId(req.body.newAns.question._id);
+    const newAnswer = new Answer({
+        text: req.body.newAns.text,
+        answerBy: req.session.user,
+        answerDate: new Date(),
+        comments: [],
+        upvotes: [],
+        downvotes: [],
+    });
+    const aid = await newAnswer.save();
+    await Question.updateOne({_id:objectId}, {$push: {answers: aid}}).exec();
+    res.send();
+})
+
+app.post("/editQuestion", async (req,res) =>{
+    let { _id, title, summary, text, tags } = req.body;
+    let newTags = [];
+    const user = await User.findOne({username:req.session.user}).exec();
+
+    await Promise.all(tags.map(async (tag) => {
+        const isNewTag = await Tag.findOne({name: tag}).exec();
+        if(!isNewTag){
+            newTags.push(tag);
+        }
+    }));
+
+    if(newTags.length > 0 && user.reputation < 50 && user.userType !== 'admin'){
+        return res.send({
+            success: false,
+            errorMsg: "You don't have enough reputation to create a new tag"
+        });
+    }
+    else{
+        if(newTags.length > 0){
+            await Promise.all(newTags.map(async(tag) => {
+                let newTag = new Tag({
+                    name: tag
+                });
+
+                let tid = await newTag.save();
+                await User.updateOne({username: user.username}, {$push:{tags:tid}});
+            }));
+        }
+        tags = await Promise.all(tags.map(async(tag) => {
+            let tid = await Tag.findOne({name: tag}).exec();
+            if (tid) {
+                return tid._id; // return the ObjectId, not the whole document
+            } else {
+                // handle the case where the tag is not found in the database
+                throw new Error(`Tag not found: ${tag}`);
+            }
+        }));
+        Question.updateOne({_id: _id}, {title: title, summary: summary, text:text, tags:tags}).exec();
+        res.send({
+            success:true
+        });
+    }
+})
+
+app.post("/updateQuestionViewCount", (req,res)=>{
+    Question.updateOne({_id: req.body._id}, {$inc: {views: 1}}).exec();
+    res.send();
 })

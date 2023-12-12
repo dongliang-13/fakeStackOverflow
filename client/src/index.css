@@ -315,17 +315,17 @@ body {
     align-items: center;
 }
 
-#newQuestionPage{
+#newQuestionPage, #editQuestion{
     padding: 0 5%;
 }
 
-#newQuestionPage label{
+#newQuestionPage label, #editQuestion label{
     display:block;
     font-size: 35px;
     padding-top: 40px;
 }
 
-#newQuestionPage input{
+#newQuestionPage input, #editQuestion input{
     display: block;
     width: 100%;
     margin-bottom: 20px;
@@ -333,7 +333,7 @@ body {
     font-size: 20px;
 }
 
-#newQuestionPage-questionText{
+#newQuestionPage-questionText, #editQuestion-text{
     display:block;
     width:100%;
     margin-bottom: 20px;
@@ -511,6 +511,7 @@ body {
     display:flex;
     flex-direction: column;
     overflow-y: scroll;
+    height:84.5vh;
 }
 
 #tagsPage-top{
@@ -555,4 +556,12 @@ body {
 .tagForTagsPage-name{
     color:blue;
     cursor:pointer;
+}
+
+#profile-top{
+    display:flex;
+    flex-direction: column;
+    font-size: 30px;
+    gap: 20px;
+    padding: 20px;
 }
