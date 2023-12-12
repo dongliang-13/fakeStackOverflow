@@ -280,14 +280,23 @@ app.post("/editQuestion", async (req,res) =>{
                 throw new Error(`Tag not found: ${tag}`);
             }
         }));
-        Question.updateOne({_id: _id}, {title: title, summary: summary, text:text, tags:tags}).exec();
+        Question.updateOne({_id: _id}, {title: title, summary: summary, text:text, tags:tags, askedDateTime: Date.now()}).exec();
         res.send({
-            success:true
+            success:true,
         });
     }
 })
 
 app.post("/updateQuestionViewCount", (req,res)=>{
     Question.updateOne({_id: req.body._id}, {$inc: {views: 1}}).exec();
+    res.send();
+})
+
+app.post("/deleteQuestion", async (req,res)=>{
+    await User.updateOne(
+        { username: req.body.username },
+        { $pull: { questions: { _id: req.body.id } } }
+    ).exec();
+    await Question.findOneAndRemove({_id : req.body.id}).exec();
     res.send();
 })

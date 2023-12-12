@@ -3,7 +3,6 @@ export default function TagForTagsPage(props){
         <div className = "tagForTagsPage">
             <div className ="tagForTagsPage-name" onClick = {()=>{
                 props.changeSearchResult("["+props.tagName+"]");
-                props.changePage("searchResultPage");
             }}>
                 <u>{props.tagName}</u>
             </div>

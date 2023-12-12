@@ -9,30 +9,36 @@ export default function EditQuestion(props){
     let [errorMsg, setErrorMsg] = useState("");
 
     const editQ = (e) => {
-        e.preventDefault();
-        const question = {
-            _id: props.editQuestion._id,
-            title: title,
-            text: text,
-            tags: tag.trim().split(" "),
-            summary: summary,
-        };
-        if(question.title.length>50){
-            setErrorMsg("Title over 50 characters");
-            return;
+      e.preventDefault();
+      const question = {
+        _id: props.editQuestion._id,
+        title: title,
+        text: text,
+        tags: tag.trim().split(" "),
+        summary: summary,
+      };
+      if(question.title.length>50){
+        setErrorMsg("Title over 50 characters");
+        return;
+      }
+      else if (question.summary.length>140){
+        setErrorMsg("Summary over 140 characters");
+        return;
+      }
+      axios.post("http://127.0.0.1:8000/editQuestion", question, {withCredentials:true}).then(res=>{
+        if(res.data.success){
+          props.changePage("profile");
         }
-        else if (question.summary.length>140){
-            setErrorMsg("Summary over 140 characters");
-            return;
+        else{
+          setErrorMsg(res.data.errorMsg);
         }
-        axios.post("http://127.0.0.1:8000/editQuestion", question, {withCredentials:true}).then(res=>{
-            if(res.data.success){
-                props.changePage("profile");
-            }
-            else{
-                setErrorMsg(res.data.errorMsg);
-            }
-        });
+      });
+    }
+
+    const deleteQuestion = () => {
+      axios.post("http://127.0.0.1:8000/deleteQuestion", {id : props.editQuestion._id, username:props.user.username}, {withCredentials:true}).then(res=>{
+        props.changePage("profile");
+      })
     }
 
     return <div>
@@ -62,9 +68,13 @@ export default function EditQuestion(props){
       <input type="text" id="editQuestion-tags" value = {tag} onChange = {(e) => setTag(e.target.value)} required />
       <span style ={{color:'red', fontSize:'20px'}}>{errorMsg}</span>
       <div id="newQuestionPage-finalLine">
-        <button type = "submit" id="newQuestionPage-submitForm">Edit Question</button>
+        <button type = "submit" id="newQuestionPage-submitForm">Repost Question</button>
         <span style={{ color: 'red' }}>* indicates mandatory fields</span>
       </div>
     </form>
+    <div style = {{margin:"0 0 5% 5%"}}>
+      <button id="newQuestionPage-submitForm" style={{marginRight:"20px"}} onClick = {()=>{props.changePage("profile")}}>Back</button>
+      <button id="newQuestionPage-submitForm" onClick = {() => deleteQuestion()}>Delete Question</button>
+    </div>
   </div>
 }

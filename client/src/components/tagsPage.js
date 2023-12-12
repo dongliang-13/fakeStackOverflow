@@ -26,13 +26,16 @@ export default class TagsPage extends Component{
     render(){
         this.tagMap = this.getMapOfTags();
         this.htmlTag = Array.from(this.tagMap, ([key,value], index) => {
-            return <TagForTagsPage 
-            tagName={value.name} 
-            tagAmount = {value.value} 
-            key={index} 
-            changePage = {this.props.changePage}
-            changeSearchResult = {this.props.changeSearchResult}
-        />})
+            if(value.value!==0){
+                return <TagForTagsPage 
+                    tagName={value.name} 
+                    tagAmount = {value.value} 
+                    key={index} 
+                    changePage = {this.props.changePage}
+                    changeSearchResult = {this.props.changeSearchResult} />
+            }
+            return null;
+        })
         const isLoggedIn = (this.props.user.userType === 'registered' || this.props.user.userType === 'admin');
         return(
             <div id = "tagsPage">

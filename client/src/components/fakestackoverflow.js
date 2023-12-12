@@ -47,6 +47,7 @@ export default class FakeStackoverflow extends React.Component{
   }
 
   changeSearchResult(text){
+    console.log(text);
     this.setState( {
       page : "searchResultPage", 
       searchResultText : text,
@@ -135,10 +136,23 @@ export default class FakeStackoverflow extends React.Component{
     let copyData = {...this.state.data};
     if(searchFilterText!==""){
       if(searchFilterText.includes("[") && searchFilterText.includes("]")){
+        const regex = /\[(.*?)\]/g;
+        const matches = searchFilterText.match(regex);
+        const textArray = matches.map(match => match.slice(1, -1));
+        copyData.question = copyData.question.filter((q) => {
+          let arrTag = []; //storing tag name for each quesiton inside arrTag
+          q.tags.forEach( (t) => {
+            let foundTag = copyData.tag.find( (tagz) => {
+              return tagz._id === t;
+            });
+            arrTag.push(foundTag.name);
+          });
+          return textArray.some(item => arrTag.includes(item))
+        });
       }
       else{
-          const q = copyData.question.filter((question) => question.title.toLowerCase().includes(searchFilterText.toLowerCase()));
-          copyData.question = q;
+        const q = copyData.question.filter((question) => question.title.toLowerCase().includes(searchFilterText.toLowerCase()));
+        copyData.question = q;
       }
     }else{
       if(this.state.page === 'searchResultPage'){
@@ -249,6 +263,7 @@ export default class FakeStackoverflow extends React.Component{
     }
     else if (this.state.page === "editQuestion"){
       return <EditQuestion 
+        user = {this.state.user}
         editQuestion = {this.state.editQuestion}
         changePage = {this.setPage}/>
     }
