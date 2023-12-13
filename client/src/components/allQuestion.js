@@ -13,7 +13,7 @@ export default class AllQuestion extends Component {
                     changefilterMode = {this.props.changefilterMode}
                     changePage = {this.props.setPage}
                     user = {this.props.user}/>
-                <Questions data = {this.copyData} changePage = {this.props.setPage} updateDataView = {this.props.updateDataView}/>
+                <Questions data = {this.copyData} changePage = {this.props.setPage} updateDataView = {this.props.updateDataView} user = {this.props.user}/>
             </div>
         );
     }

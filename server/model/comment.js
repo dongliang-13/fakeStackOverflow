@@ -11,6 +11,10 @@ var CommentSchema = new Schema({
         type: String,
         default: [],
     }],
+    commentBy: {
+        type:String,
+        required:true
+    }
 });
 
 module.exports = mongoose.model('Comment', CommentSchema);

@@ -565,3 +565,63 @@ body {
     gap: 20px;
     padding: 20px;
 }
+
+#questionToggle{
+    margin: 30px 5px;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap:50px;
+}
+
+#questionToggle button{
+    font-size:25px;
+    align-items: center;
+    background-clip: padding-box;
+    background-color: rgb(0, 146, 250);
+    border: 1px solid transparent;
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+}
+
+.comment{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 50px;
+    margin: 10px 400px;
+    border: solid black 2pt;
+}
+
+.comment-header{
+    display:flex;
+    gap: 100px;
+}
+
+.addComment form{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.addComment input[type="text"]{
+    width:300px;
+    height:30px;
+    padding:2px 10px;
+    font-size: 20px;
+}
+
+.addComment input[type="submit"]{
+    scale: 90%;
+}

@@ -63,10 +63,11 @@ function createTag(name, questions){
     return newTag.save();
 }
 
-function createComment(text, upvotes){
+function createComment(text, upvotes, commentBy){
     const comment = {
         text: text,
         upvotes: upvotes,
+        commentBy: commentBy
     };
     let newComment = new Comment(comment);
     return newComment.save();

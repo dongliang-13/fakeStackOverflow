@@ -21,6 +21,7 @@ export default class Navigate extends React.Component{
             <button onClick = {()=>{this.props.setPage("home")}}>All Questions</button>
             <button onClick = {()=>{this.props.setPage("tagsPage")}}>All Tags</button>
             {isLoggedIn ? <button onClick = {()=>{this.props.setPage("profile")}}>Profile</button> : null}
+            {!isLoggedIn ? <button onClick = {()=>{this.props.setPage("welcome")}}>Login</button> : null}
             <SearchParam 
                 changeSearchResult = {this.props.changeSearchResult}
             />

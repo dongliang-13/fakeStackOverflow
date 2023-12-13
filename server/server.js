@@ -300,3 +300,26 @@ app.post("/deleteQuestion", async (req,res)=>{
     await Question.findOneAndRemove({_id : req.body.id}).exec();
     res.send();
 })
+
+app.post("/addComment", async (req,res)=>{
+    let comment = new Comment({
+        text: req.body.comment,
+        upvotes: [],
+        commentBy: req.session.user,
+    });
+
+    let cid = await comment.save();
+    
+    await Question.findOneAndUpdate({_id: req.body.qid}, {$push : {comments : cid}})
+        .then(response=>{
+            res.send({success:true, cid : cid._id})
+        })
+        .catch(err=>{
+            res.send({success:false})
+    });
+})
+
+app.post("/upvoteComment", async (req,res) => {
+    await Comment.findOneAndUpdate({_id : req.body.cid} , {$push : {upvotes : req.session.user}});
+    res.send({userAdded : req.session.user});
+})

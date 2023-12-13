@@ -23,9 +23,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.on('connect',()=>console.log('successful connection'));
 
 const populate = async () => {
-    let c1 = await createComment('nice question', ['dummy1']);
-    let c2 = await createComment('I was thinking the same thing', ['dummy2']);
-    let c3 = await createComment('agree lol', ['dummy3']);
+    let c1 = await createComment('nice question', ['dummy1'], 'dummy2');
+    let c2 = await createComment('I was thinking the same thing', ['dummy2'],'dummy1');
+    let c3 = await createComment('agree lol', ['dummy3'], 'dummy1');
     let t1 = await createTag('react');
     let t2 = await createTag('javascript');
     let t3 = await createTag('android-studio');

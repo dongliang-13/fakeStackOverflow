@@ -51,6 +51,7 @@ export default class FakeStackoverflow extends React.Component{
     this.setState( {
       page : "searchResultPage", 
       searchResultText : text,
+      filterMode : "newest",
     });
   }
 
