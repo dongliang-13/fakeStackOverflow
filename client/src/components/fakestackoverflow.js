@@ -95,17 +95,17 @@ export default class FakeStackoverflow extends React.Component{
     });
   }
   
-  componentDidMount(){
-    axios.get('http://127.0.0.1:8000', {withCredentials:true})
+  async componentDidMount(){
+    await axios.get('http://127.0.0.1:8000', {withCredentials:true})
       .then(response => 
         {
           this.setUser({
             userType : response.data.userType,
             username : response.data.username
           });
+          this.updateData();
         }
       );
-    this.updateData();
   }
 
   async updateData(){
@@ -195,7 +195,7 @@ export default class FakeStackoverflow extends React.Component{
 
   render(){
     let html = "";
-    if((this.state.user.userType === 'registered' && this.state.page === 'welcome') || this.state.page === 'home'){
+    if((this.state.user.userType === 'registered' && this.state.page === 'welcome') || this.state.user.userType === 'admin'|| this.state.page === 'home'){
       html = <Home
         user = {this.state.user}
         setPage = {this.setPage}

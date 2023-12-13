@@ -22,7 +22,7 @@ export default class Welcome extends React.Component{
         }
         axios.post("http://127.0.0.1:8000/login", loginInfo, { withCredentials: true }).then(response=>{
             if(response.data.success){
-                this.props.setUser({userType:'registered', username: response.data.username});
+                this.props.setUser({userType:response.data.userType, username: response.data.username});
                 this.props.setPage('home');
             }
             else{

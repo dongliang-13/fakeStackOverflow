@@ -54,6 +54,10 @@ export default class Question extends Component{
                         <Asker color = "red" name = {this.props.question.askedBy} date = {this.props.question.askedDateTime} action = "asked"/>
                     </div>
                 </div>
+                <div>
+                    <button>Upvote Question</button>
+                    <button>Downvote Question</button>
+                </div>
                 <Comments user = {this.props.user} question = {this.props.question} commentData = {this.props.data.comment}/>
             </div>
         );

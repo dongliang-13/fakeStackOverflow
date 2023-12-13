@@ -8,7 +8,9 @@ export default function Questions(props){
 
     useEffect(() => {
         const questions1 = props.data.question.map( (value,index) => (
-            <Question key={index} user = {props.user} question={value} data={props.data} changePage = {props.changePage} updateDataView = {props.updateDataView}/>
+            <React.Fragment key={index}>
+                <Question user = {props.user} question={value} data={props.data} changePage = {props.changePage} updateDataView = {props.updateDataView}/>
+            </React.Fragment>
         ));
 
         setLength(questions1.length);

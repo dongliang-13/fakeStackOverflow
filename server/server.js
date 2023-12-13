@@ -59,10 +59,11 @@ app.use(session({
     store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/fake_so'})
 }));
   
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     if(req.session.user){
         let name = req.session.user;
-        res.send({userType:'registered', username: name, id: req.sessionID})
+        const user = await User.findOne({username: name}).exec();
+        res.send({userType: user.userType, username: name, id: req.sessionID})
     }
     else{
         res.send({userType:'guest', username: null});
@@ -103,6 +104,7 @@ app.post('/login', async (req,res)=>{
             res.send({
                 success : true,
                 username : user.username,
+                userType : user.userType,
             });
         }
         else {
@@ -322,4 +324,9 @@ app.post("/addComment", async (req,res)=>{
 app.post("/upvoteComment", async (req,res) => {
     await Comment.findOneAndUpdate({_id : req.body.cid} , {$push : {upvotes : req.session.user}});
     res.send({userAdded : req.session.user});
+})
+
+app.get("/getReputation", async (req,res) => {
+    const reputation = await User.findOne({username:req.session.user}).exec().reputation;
+    res.send({reputation : reputation});
 })

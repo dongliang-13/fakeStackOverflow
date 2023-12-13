@@ -15,6 +15,7 @@ export default function Comment(props){
             });
         }
     }
+    const isLoggedIn = (props.user.userType === 'registered' || props.user.userType === 'admin');
     return (
         <div className = "comment">
             <div className = "comment-header">
@@ -26,7 +27,7 @@ export default function Comment(props){
                 </span>
             </div>
             <span style = {{margin:"10px 0", backgroundColor:"yellow"}}>{props.text}</span>
-            <button onClick = {()=>upvote()}>Upvote</button>
+            {isLoggedIn ? <button onClick = {()=>upvote()}>Upvote</button> : null}
         </div>
     )
 }
