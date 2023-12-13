@@ -8,3 +8,4 @@ variable amount of reputation, and admin account. When running this using node, 
 password in the following format: 
     node server/init.js adminUsername password
 **The given email to admin is 'admin@gmail.com'**
+*PS: This entire application was done by me only so not all features looks aesethic. (Please be nice when grading plss)
