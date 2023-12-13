@@ -261,7 +261,8 @@ export default class FakeStackoverflow extends React.Component{
     else if (this.state.page === "profile"){
       html = <Profile 
         user = {this.state.user}
-        changePage = {this.setPage}/>;
+        changePage = {this.setPage}
+        allUsers = {this.state.data.user}/>;
     }
     else if (this.state.page === "editQuestion"){
       return <EditQuestion 

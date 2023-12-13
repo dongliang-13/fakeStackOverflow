@@ -37,9 +37,19 @@ export default function ProfileBottom(props){
         )
     }
     else if(props.user.userType === 'admin'){
+        let html = props.allUsers.map( (user, index) => {
+            return (
+                <div key = {index} className = "bottomBorder" style = {{padding: "30px"}}>
+                    Username: {user.username} <br />
+                    Email: {user.email} <br />
+                    Reputation: {user.reputation} <br />
+                    Account Created: {(new Date(user.createdDate)).toString()}
+                </div>
+            )
+        })
         return (
             <>
-                admin
+                {html}
             </>
         )
     }

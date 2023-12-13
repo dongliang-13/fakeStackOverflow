@@ -22,7 +22,7 @@ export default function Profile(props){
     return (
         <>
             <ProfileTop user = {user}/>
-            <ProfileBottom user = {user} changePage = {props.changePage}/>
+            <ProfileBottom user = {user} changePage = {props.changePage} allUsers = {props.allUsers}/>
         </>
     )
 }
