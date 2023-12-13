@@ -295,13 +295,35 @@ app.post("/updateQuestionViewCount", (req,res)=>{
 })
 
 app.post("/deleteQuestion", async (req,res)=>{
-    await User.updateOne(
-        { username: req.body.username },
-        { $pull: { questions: { _id: req.body.id } } }
-    ).exec();
-    await Question.findOneAndRemove({_id : req.body.id}).exec();
-    res.send();
-})
+    try {
+        await User.updateOne(
+            { username: req.body.username },
+            { $pull: { questions: { _id: req.body.id } } }
+        ).exec();
+
+        const question = await Question.findOne({_id : req.body.id}).exec();
+
+        await Promise.all(question.answers.map(async(ans) => {
+            const answer = await Answer.findOne({_id:ans}).exec();
+            await Promise.all(answer.comments.map(async (com) => {
+                await Comment.findOneAndRemove({_id:com}).exec();
+            }));
+            await Answer.findOneAndRemove({_id:ans}).exec();
+        }));
+
+        await Promise.all(question.comments.map(async (com) => {
+            await Comment.findOneAndRemove({_id:com}).exec();
+        }));
+
+        await Question.findOneAndRemove({_id : req.body.id}).exec();
+
+        res.send();
+    } catch (error) {
+        console.error(error);
+        res.status(500).send();
+    }
+});
+
 
 app.post("/addComment", async (req,res)=>{
     let comment = new Comment({
@@ -329,4 +351,62 @@ app.post("/upvoteComment", async (req,res) => {
 app.get("/getReputation", async (req,res) => {
     const reputation = await User.findOne({username:req.session.user}).exec().reputation;
     res.send({reputation : reputation});
+})
+
+app.post("/upvoteQuestion", async (req,res)=> {
+    const user = await User.findOne({username: req.session.user}).exec();
+    if(user.reputation < 50 && user.userType !== "admin"){
+        return res.send({success:false})
+    }
+    await Question.findOneAndUpdate({_id: req.body.qid}, {$push : {upvotes : req.session.user}}).exec();
+    await User.findOneAndUpdate({username: req.body.uid}, {$inc : {reputation : 5}}).exec();
+    res.send({success:true});
+})
+
+app.post("/downvoteQuestion", async (req,res)=>{
+    const user = await User.findOne({username: req.session.user}).exec();
+    if(user.reputation < 50 && user.userType !== "admin"){
+        return res.send({success:false})
+    }
+    await Question.findOneAndUpdate({_id: req.body.qid}, {$push : {downvotes : req.session.user}}).exec();
+    await User.findOneAndUpdate({username: req.body.uid}, {$inc : {reputation : -10}}).exec();
+    res.send({success:true});
+})
+
+app.post("/upvoteAnswer", async (req,res)=> {
+    const user = await User.findOne({username: req.session.user}).exec();
+    if(user.reputation < 50 && user.userType !== "admin"){
+        return res.send({success:false})
+    }
+    await Answer.findOneAndUpdate({_id: req.body.aid}, {$push : {upvotes : req.session.user}}).exec();
+    await User.findOneAndUpdate({username: req.body.uid}, {$inc : {reputation : 5}}).exec();
+    res.send({success:true});
+})
+
+app.post("/downvoteAnswer", async (req,res)=>{
+    const user = await User.findOne({username: req.session.user}).exec();
+    if(user.reputation < 50 && user.userType !== "admin"){
+        return res.send({success:false})
+    }
+    await Answer.findOneAndUpdate({_id: req.body.aid}, {$push : {downvotes : req.session.user}}).exec();
+    await User.findOneAndUpdate({username: req.body.uid}, {$inc : {reputation : -10}}).exec();
+    res.send({success:true});
+})
+
+app.post("/addCommentAnswer", async (req,res)=>{
+    let comment = new Comment({
+        text: req.body.comment,
+        upvotes: [],
+        commentBy: req.session.user,
+    });
+
+    let cid = await comment.save();
+    
+    await Answer.findOneAndUpdate({_id: req.body.aid}, {$push : {comments : cid}})
+        .then(response=>{
+            res.send({success:true, cid : cid._id})
+        })
+        .catch(err=>{
+            res.send({success:false})
+    });
 })

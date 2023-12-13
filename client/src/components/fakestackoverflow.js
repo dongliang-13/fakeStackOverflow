@@ -228,7 +228,8 @@ export default class FakeStackoverflow extends React.Component{
         question = {this.state.currentQuestion}
         updateModel = {this.updateData}
         changePage = {this.setPage}
-        answer = {this.state.data.answer}/>
+        answer = {this.state.data.answer}
+        commentData = {this.state.data.comment}/>
     }
     else if (this.state.page === "newAnswerPage"){
       html = <NewAnswerPage 

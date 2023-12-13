@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Comment from "./comment";
+import AnswerComment from "./answerComment";
 import axios from "axios";
 
 export default function Comments(props){
@@ -10,15 +10,18 @@ export default function Comments(props){
 
     useEffect(() => {
         let htmlArray = [];
-        props.question.comments.slice().reverse().forEach( (comment, index) => {
+        let currentAnswer = props.answer.find( (a) => {
+            return a._id === props.answerId;
+        });
+        currentAnswer.comments.slice().reverse().forEach( (comment, index) => {
             let commentD = props.commentData.find( (c) => {
                 return c._id === comment;
             })
-            htmlArray.push(<Comment key = {index} id = {comment} text = {commentD.text} upvotes = {commentD.upvotes} commentBy = {commentD.commentBy} user = {props.user}/>);
+            htmlArray.push(<AnswerComment key = {index} id = {comment} text = {commentD.text} upvotes = {commentD.upvotes} commentBy = {commentD.commentBy} user = {props.user}/>);
         });
         setTotalComment(htmlArray.length);
         setHtml(htmlArray.slice(commentPage*3, (commentPage+1)*3));
-    }, [props.question.comments, props.commentData, props.user, commentPage]);
+    }, [ props.commentData, props.user, commentPage, props.answer , props.answerId]);
 
     const addComment = async (e) => {
         e.preventDefault();
@@ -30,10 +33,10 @@ export default function Comments(props){
             window.alert("Comment Length Must Not Be Greater Than 140 Characters")
         }
         else{
-            await axios.post("http://127.0.0.1:8000/addComment", {comment: comment, qid: props.question._id}, {withCredentials:true})
+            await axios.post("http://127.0.0.1:8000/addCommentAnswer", {comment: comment, aid: props.answerId}, {withCredentials:true})
             .then(res => {
                 if(res.data.success){
-                    let newComment = <Comment key = {totalComment} id = {res.data.cid} text = {comment} upvotes = {[]} commentBy = {props.user.username} user = {props.user}/>;
+                    let newComment = <AnswerComment key = {totalComment} id = {res.data.cid} text = {comment} upvotes = {[]} commentBy = {props.user.username} user = {props.user}/>;
                     setHtml(prevHtml => [newComment, ...prevHtml,]);
                     setTotalComment(prevTotal => prevTotal + 1);
                 }

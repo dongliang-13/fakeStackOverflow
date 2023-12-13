@@ -10,7 +10,11 @@ export default class AnswerPage extends Component{
         return(
             <div id = "answerPage">
                 <QuestionInfo question = {this.props.question} changePage = {this.props.changePage} user = {this.props.user}/>
-                <Answers question = {this.props.question} changePage = {this.props.changePage} answer = {this.props.answer} user = {this.props.user}/>
+                <Answers question = {this.props.question} 
+                    changePage = {this.props.changePage} 
+                    answer = {this.props.answer} 
+                    user = {this.props.user}
+                    commentData = {this.props.commentData}/>
             </div>
         )
     }

@@ -19,6 +19,8 @@ export default class Answers extends Component{
                 key = {index}
                 index = {index}
                 answer = {this.props.answer}
+                user = {this.props.user}
+                commentData = {this.props.commentData}
             /> 
         );
         return (

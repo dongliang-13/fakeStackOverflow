@@ -14,7 +14,7 @@ export default class SearchResultPage extends Component{
                 changePage = {this.props.changePage}
                 changefilterMode = {this.props.changefilterMode}
             />
-            <Questions data = {this.copyData} changePage = {this.props.changePage} updateDataView = {this.props.updateDataView}/>
+            <Questions data = {this.copyData} changePage = {this.props.changePage} updateDataView = {this.props.updateDataView} user = {this.props.user}/>
         </div>
         );
     }

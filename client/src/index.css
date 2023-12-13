@@ -626,7 +626,14 @@ body {
     scale: 90%;
 }
 
-.comment-button, .answer-button button{
+.questionVote{
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin: 0 0 20px 0;
+}
+
+.comment-button, .answer-button button, .questionVote button{
     font-size:25px;
     align-items: center;
     background-clip: padding-box;
