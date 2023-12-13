@@ -195,7 +195,7 @@ export default class FakeStackoverflow extends React.Component{
 
   render(){
     let html = "";
-    if((this.state.user.userType === 'registered' && this.state.page === 'welcome') || this.state.user.userType === 'admin'|| this.state.page === 'home'){
+    if(( (this.state.user.userType === 'registered' || this.state.user.userType === 'admin') && this.state.page === 'welcome')|| this.state.page === 'home'){
       html = <Home
         user = {this.state.user}
         setPage = {this.setPage}
