@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/9NDadFFr)
 Add design docs in *images/*
 
@@ -9,3 +10,6 @@ password in the following format:
     node server/init.js adminUsername password
 **The given email to admin is 'admin@gmail.com'**
 *PS: This entire application was done by me only so not all features looks aesethic. (Please be nice when grading plss)
+=======
+# fakeStackOverflow
+>>>>>>> d09a481fd234898e66c663d7ce47fecc71ae7aee
